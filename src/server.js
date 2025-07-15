@@ -16,11 +16,17 @@ const START_SERVER = () => {
     app.use('/v1', APIs_V1);
 
     app.use(errorHandlingMiddleware);
-
-    app.listen(env.APP_PORT, env.APP_HOST, () => {
-        console.log(`Server running at http://${env.APP_HOST}:${env.APP_PORT}/`);
-        console.log(`Author: ${env.AUTHOR}`);
-    } );
+    if(env.BUILD_MODE === 'production'){
+        app.listen(process.env.PORT, () => {
+            console.log(`Production: Server running at:${process.env.PORT}/`);
+            console.log(`Author: ${env.AUTHOR}`);
+        } );  
+    }   else {
+        app.listen(env.LOCAL_DEV_APP_PORT, env.LOCAL_DEV_APP_HOST, () => {
+            console.log(`Server running at http://${env.LOCAL_DEV_APP_HOST}:${env.LOCAL_DEV_APP_PORT}/`);
+            console.log(`Author: ${env.AUTHOR}`);
+        } );
+    }
 
     asyncExitHook(() => {
         console.log('Closing MongoDB connection...');
